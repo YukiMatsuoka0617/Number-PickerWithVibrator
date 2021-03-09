@@ -11,66 +11,55 @@ public class MainActivity extends AppCompatActivity implements NumberPicker.OnVa
 
     Vibrator vibrator;
 
-    NumberPicker numberPicker0;
-    NumberPicker numberPicker1;
-    NumberPicker numberPicker2;
+    NumberPicker[] numberPickers = new NumberPicker[3];
+    int[] numberPickerIds = {R.id.hour, R.id.numPicker1, R.id.numPicker2};
+    int[] maxValues = {23, 5, 9};
+    int minValue = 0;
+    int vibrationTime = 50;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        numberPicker0 = findViewById(R.id.hour);
-        numberPicker1 = findViewById(R.id.numPicker1);
-        numberPicker2 = findViewById(R.id.numPicker2);
-
-        numberPicker0.setMaxValue(23);
-        numberPicker0.setMinValue(0);
-
-        numberPicker1.setMaxValue(5);
-        numberPicker1.setMinValue(0);
-
-        numberPicker2.setMaxValue(9);
-        numberPicker2.setMinValue(0);
-
-        numberPicker0.setOnValueChangedListener(this);
-        numberPicker1.setOnValueChangedListener(this);
-        numberPicker2.setOnValueChangedListener(this);
-
-        vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        for (int i = 0; i < numberPickers.length; i++) {
+            numberPickers[i] = findViewById(numberPickerIds[i]);
+            numberPickers[i].setMaxValue(maxValues[i]);
+            numberPickers[i].setMinValue(minValue);
+            numberPickers[i].setOnValueChangedListener(this);
+        }
     }
 
     @Override
     public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-        vibrator.vibrate(50);
+        vibrator.vibrate(vibrationTime);
         switch (numberPicker.getId()) {
             case R.id.hour:
-                Log.d("test", "getValue:" + numberPicker.getValue());
-//                break;
+                break;
             case R.id.numPicker1:
-                Log.d("test", "getValue:" + numberPicker.getValue());
                 break;
             case R.id.numPicker2:
-                if (i == 9 && i1 == 0) {
-                    if (numberPicker1.getValue() == 5) {
-                        numberPicker0.setValue(numberPicker0.getValue() + 1);
-                        numberPicker1.setValue(0);
+                if (i == maxValues[2] && i1 == minValue) {
+                    if (numberPickers[1].getValue() == maxValues[1]) {
+                        numberPickers[0].setValue(numberPickers[0].getValue() + 1);
+                        numberPickers[1].setValue(minValue);
                     } else {
-                        numberPicker1.setValue(numberPicker1.getValue() + 1);
+                        numberPickers[1].setValue(numberPickers[1].getValue() + 1);
                     }
                 }
 
-                if (i == 0 && i1 == 9) {
-                    if(numberPicker0.getValue() != 0 && numberPicker1.getValue() == 0) {
-                        numberPicker0.setValue(numberPicker0.getValue() - 1);
-                        numberPicker1.setValue(5);
-                    }
-                    else if(numberPicker0.getValue() == 0 && numberPicker1.getValue() == 0){
-                        numberPicker0.setValue(numberPicker0.getValue() - 1);
-                        numberPicker1.setValue(numberPicker1.getValue() - 1);
-                    }
-                    else {
-                        numberPicker1.setValue(numberPicker1.getValue() - 1);
+                if (i == minValue && i1 == maxValues[2]) {
+                    if (numberPickers[0].getValue() != minValue &&
+                            numberPickers[1].getValue() == minValue) {
+                        numberPickers[0].setValue(numberPickers[0].getValue() - 1);
+                        numberPickers[1].setValue(maxValues[1]);
+                    } else if (numberPickers[0].getValue() == minValue &&
+                            numberPickers[1].getValue() == minValue) {
+                        numberPickers[0].setValue(numberPickers[0].getValue() - 1);
+                        numberPickers[1].setValue(numberPickers[1].getValue() - 1);
+                    } else {
+                        numberPickers[1].setValue(numberPickers[1].getValue() - 1);
                     }
                 }
                 break;
